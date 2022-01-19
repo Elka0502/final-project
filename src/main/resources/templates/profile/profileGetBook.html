@@ -1,0 +1,72 @@
+<span th:if="${passwordMessage}" th:utext="${passwordMessage}" style="color:red;font-style:italic;"/>
+<form th:action="@{/profile/findBook/{id}(id=${person.id})}" th:object="${person}" method="post">
+	<th:block th:insert="block/service"></th:block>
+	<div class="col-md-50">
+		<div class="section-heading">
+   		  	<h2>Выдача книг</h2>
+   		</div>
+	</div>
+
+	<div>
+		<div class="col-md-12">
+			<div class="col-md-4">
+				<label>Инв. номер</label>
+				<input type="text" th:name="numBook" th:value="${numBookFind}"/>
+			</div>
+			<div class="col-md-6">
+				<label>Автор</label>
+				<input type="text" th:name="author" th:value="${authorFind}"/>
+				<label>Наименование</label>		
+				<input type="text" th:name="bookName" th:value="${bookNameFind}"/>
+			</div>
+		</div>
+	</div>
+    <button type="reset" id="form-submit" class="button">Очистить</button>
+   	<button type="submit" id="form-submit" class="button">Найти</button>
+</form> 	
+      
+<span th:if="${error}" th:utext="${error}" style="color:black; font-weight: bolder;font-style:italic;"/> <br/>
+						 
+<!-- Tables -->
+<div th:unless="${error}" class="container-fluid">
+    <div th:if="${listbooks}" class="row">
+      	<div class="col-md-20">
+        	<div class="default-table">
+       			<table>
+            		<thead>
+              			<tr>
+             				<th width="100">Инв.№</th>
+                 			<th>Книга</th>
+					        <th width="100">Всего/Доступно</th> 
+					        <th width="100"></th>
+					        <th width="130"></th>
+              			</tr>
+            		</thead>
+            		<tbody>
+              			<tr th:each="book : ${listbooks}">
+               				<form action="#" th:action="@{/profile/getInFindingBook/{id}(id=${person.id})}"  method="post"> 
+              					<td th:text="${book.id}">Инв.номер</td>
+								<td th:text="${book.getStringBook}">Книга</td>
+						        <td th:text="${book.count + '/' + book.available}">Доступно</td>
+						        <td th:if="${book.available>0}" style = "valign: middle;"> 
+	        						<select th:value=1 th:name="idPlace" id="idPlace" style="width: 90px;" >
+										<option style = "text-align: left;"
+												th:each="place : ${listPlaces}"
+												th:value="${place.id}"
+												th:text="${place.name}"/>
+									</select>
+								</td>
+								<td>
+									<input type="text" th:value="${book.id}" th:name ="idBook" style="display:none;">
+								</td>
+								<td> 
+									<button th:if="${book.available>0}" type="submit" id="form-submit"  class="button">Выдать</button>
+								</td>
+							</form>
+        				</tr>
+                  	</tbody>
+                </table>
+      		</div>
+    	</div>
+  	</div>
+</div> 

@@ -1,0 +1,970 @@
+CREATE DATABASE library
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Russian_Russia.1251'
+    LC_CTYPE = 'Russian_Russia.1251'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+
+-- SEQUENCE: public.author_id_seq
+
+-- DROP SEQUENCE public.author_id_seq;
+
+CREATE SEQUENCE public.author_id_seq
+    INCREMENT 1
+    START 3
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.author_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.news_id_seq
+
+-- DROP SEQUENCE public.news_id_seq;
+
+CREATE SEQUENCE public.news_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.news_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.book_id_seq
+
+-- DROP SEQUENCE public.book_id_seq;
+
+CREATE SEQUENCE public.book_id_seq
+    INCREMENT 1
+    START 3
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.book_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.gender_id_seq
+
+-- DROP SEQUENCE public.gender_id_seq;
+
+CREATE SEQUENCE public.gender_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.gender_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.kind_of_book_id_seq
+
+-- DROP SEQUENCE public.kind_of_book_id_seq;
+
+CREATE SEQUENCE public.kind_of_book_id_seq
+    INCREMENT 1
+    START 3
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.kind_of_book_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.language_id_seq
+
+-- DROP SEQUENCE public.language_id_seq;
+
+CREATE SEQUENCE public.language_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 2147483647
+    CACHE 1;
+
+ALTER SEQUENCE public.language_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.order_id_seq
+
+-- DROP SEQUENCE public.order_id_seq;
+
+CREATE SEQUENCE public.order_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.order_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.place_id_seq
+
+-- DROP SEQUENCE public.place_id_seq;
+
+CREATE SEQUENCE public.place_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.place_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.publishing_id_seq
+
+-- DROP SEQUENCE public.publishing_id_seq;
+
+CREATE SEQUENCE public.publishing_id_seq
+    INCREMENT 1
+    START 2
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.publishing_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.reader_book_id_seq
+
+-- DROP SEQUENCE public.reader_book_id_seq;
+
+CREATE SEQUENCE public.reader_book_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.reader_book_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.status_id_seq
+
+-- DROP SEQUENCE public.status_id_seq;
+
+CREATE SEQUENCE public.status_id_seq
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.status_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.subject_id_seq
+
+-- DROP SEQUENCE public.subject_id_seq;
+
+CREATE SEQUENCE public.subject_id_seq
+    INCREMENT 1
+    START 3
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.subject_id_seq
+    OWNER TO postgres;
+
+-- SEQUENCE: public.user_id_seq
+
+-- DROP SEQUENCE public.user_id_seq;
+
+CREATE SEQUENCE public.user_id_seq
+    INCREMENT 1
+    START 6
+    MINVALUE 6
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.user_id_seq
+    OWNER TO postgres;
+
+
+
+
+-- Table: public.author
+
+-- DROP TABLE public.author;
+
+CREATE TABLE IF NOT EXISTS public.author
+(
+    id integer NOT NULL DEFAULT nextval('author_id_seq'::regclass),
+    fname character varying(70) COLLATE pg_catalog."default",
+    iname character varying(70) COLLATE pg_catalog."default",
+    oname character varying(70) COLLATE pg_catalog."default",
+    fio text COLLATE pg_catalog."default" GENERATED ALWAYS AS (
+CASE
+    WHEN ((oname)::text <> ''::text) THEN ((((((fname)::text || ' '::text) || "substring"((iname)::text, 1, 1)) || '.'::text) || "substring"((oname)::text, 1, 1)) || '.'::text)
+    WHEN ((oname)::text = ''::text) THEN ((((fname)::text || ' '::text) || "substring"((iname)::text, 1, 1)) || '.'::text)
+    ELSE NULL::text
+END) STORED,
+    CONSTRAINT author_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.author
+    OWNER to postgres;
+
+
+-- Table: public.book
+
+-- DROP TABLE public.book;
+
+CREATE TABLE IF NOT EXISTS public.book
+(
+    id integer NOT NULL DEFAULT nextval('book_id_seq'::regclass),
+    name character varying(150) COLLATE pg_catalog."default",
+    id_kind_of_book integer NOT NULL DEFAULT 1,
+    id_publishing integer NOT NULL DEFAULT 1,
+    id_language integer NOT NULL DEFAULT 1,
+    id_subject integer NOT NULL DEFAULT 1,
+    count integer NOT NULL DEFAULT 0,
+    year integer,
+    available integer NOT NULL DEFAULT 0,
+    CONSTRAINT book_pkey PRIMARY KEY (id),
+    CONSTRAINT kind_of_book_fk FOREIGN KEY (id_kind_of_book)
+        REFERENCES public.kind_of_book (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT language_fk FOREIGN KEY (id_language)
+        REFERENCES public.language (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT publishing_fk FOREIGN KEY (id_publishing)
+        REFERENCES public.publishing (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT subject_fk FOREIGN KEY (id_subject)
+        REFERENCES public.subject (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.book
+    OWNER to postgres;
+
+-- Trigger: book_insert_tr
+
+-- DROP TRIGGER book_insert_tr ON public.book;
+
+CREATE TRIGGER book_insert_tr
+    AFTER INSERT
+    ON public.book
+    FOR EACH ROW
+    EXECUTE FUNCTION public.book_insert_trigger();
+
+-- Trigger: book_update_tr
+
+-- DROP TRIGGER book_update_tr ON public.book;
+
+CREATE TRIGGER book_update_tr
+    BEFORE UPDATE 
+    ON public.book
+    FOR EACH ROW
+    EXECUTE FUNCTION public.book_update_trigger();
+
+-- Table: public.status_news
+
+-- DROP TABLE public.status_news;
+
+CREATE TABLE IF NOT EXISTS public.status_news
+(
+    id integer NOT NULL,
+    name character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT status_news_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.status_news
+    OWNER to postgres;
+
+ALTER SEQUENCE public.news_id_seq
+    OWNER TO postgres;
+
+-- Table: public.news
+
+-- DROP TABLE public.news;
+
+CREATE TABLE IF NOT EXISTS public.news
+(
+    id integer NOT NULL DEFAULT nextval('news_id_seq'::regclass),
+    text1 character varying(100) COLLATE pg_catalog."default",
+    text2 text COLLATE pg_catalog."default",
+    text3 text COLLATE pg_catalog."default",
+    imagename character varying COLLATE pg_catalog."default",
+    status integer NOT NULL DEFAULT 0,
+    datenews date NOT NULL,
+    CONSTRAINT news_pkey PRIMARY KEY (id),
+    CONSTRAINT status_fk FOREIGN KEY (status)
+        REFERENCES public.status_news (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.news
+    OWNER to postgres;
+
+-- Table: public.books_authors
+
+-- DROP TABLE public.books_authors;
+
+CREATE TABLE IF NOT EXISTS public.books_authors
+(
+    book_id integer NOT NULL,
+    author_id integer NOT NULL,
+    CONSTRAINT author_id_fk FOREIGN KEY (author_id)
+        REFERENCES public.author (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT book_id_fk FOREIGN KEY (book_id)
+        REFERENCES public.book (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.books_authors
+    OWNER to postgres;
+
+
+-- Table: public.gender
+
+-- DROP TABLE public.gender;
+
+CREATE TABLE IF NOT EXISTS public.gender
+(
+    id integer NOT NULL DEFAULT nextval('gender_id_seq'::regclass),
+    name character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT gender_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.gender
+    OWNER to postgres;
+
+
+-- Table: public.kind_of_book
+
+-- DROP TABLE public.kind_of_book;
+
+CREATE TABLE IF NOT EXISTS public.kind_of_book
+(
+    id integer NOT NULL DEFAULT nextval('kind_of_book_id_seq'::regclass),
+    name character varying(150) COLLATE pg_catalog."default",
+    CONSTRAINT kind_of_book_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.kind_of_book
+    OWNER to postgres;
+
+
+-- Table: public.language
+
+-- DROP TABLE public.language;
+
+CREATE TABLE IF NOT EXISTS public.language
+(
+    id integer NOT NULL DEFAULT nextval('language_id_seq'::regclass),
+    name character varying(45) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT language_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.language
+    OWNER to postgres;
+
+
+-- Table: public.orders
+
+-- DROP TABLE public.orders;
+
+CREATE TABLE IF NOT EXISTS public.orders
+(
+    id integer NOT NULL DEFAULT nextval('order_id_seq'::regclass),
+    date_order date,
+    id_user integer NOT NULL DEFAULT 1,
+    id_status integer DEFAULT 1,
+    num_order character varying(10) COLLATE pg_catalog."default",
+    CONSTRAINT orders_pkey PRIMARY KEY (id),
+    CONSTRAINT id_orders_fk FOREIGN KEY (id_status)
+        REFERENCES public.status_order (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT id_user_fk FOREIGN KEY (id_user)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.orders
+    OWNER to postgres;
+
+-- Trigger: oreders_delete_tr
+
+-- DROP TRIGGER oreders_delete_tr ON public.orders;
+
+CREATE TRIGGER oreders_delete_tr
+    AFTER DELETE
+    ON public.orders
+    FOR EACH ROW
+    EXECUTE FUNCTION public.order_delete_trigger();
+
+-- Trigger: oreders_insert_tr
+
+-- DROP TRIGGER oreders_insert_tr ON public.orders;
+
+CREATE TRIGGER oreders_insert_tr
+    AFTER INSERT
+    ON public.orders
+    FOR EACH ROW
+    EXECUTE FUNCTION public.order_insert_trigger();
+
+
+-- Table: public.order_book
+
+-- DROP TABLE public.order_book;
+
+CREATE TABLE IF NOT EXISTS public.order_book
+(
+    id_order integer NOT NULL DEFAULT 1,
+    id_reader_book integer NOT NULL DEFAULT 1,
+    CONSTRAINT id_order_fk FOREIGN KEY (id_order)
+        REFERENCES public.orders (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT id_reader_book_fk FOREIGN KEY (id_reader_book)
+        REFERENCES public.reader_book (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.order_book
+    OWNER to postgres;
+
+-- Table: public.person
+
+-- DROP TABLE public.person;
+
+CREATE TABLE IF NOT EXISTS public.person
+(
+    id integer NOT NULL DEFAULT nextval('user_id_seq'::regclass),
+    fname character varying(150) COLLATE pg_catalog."default" NOT NULL,
+    iname character varying(70) COLLATE pg_catalog."default" NOT NULL,
+    oname character varying(70) COLLATE pg_catalog."default",
+    email character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    passportnumber character varying(15) COLLATE pg_catalog."default",
+    passportwho character varying(100) COLLATE pg_catalog."default",
+    adress character varying(150) COLLATE pg_catalog."default",
+    phone character varying(17) COLLATE pg_catalog."default",
+    birthday date,
+    id_gender integer NOT NULL DEFAULT 1,
+    CONSTRAINT person_pkey PRIMARY KEY (id),
+    CONSTRAINT gender_fk FOREIGN KEY (id_gender)
+        REFERENCES public.gender (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.person
+    OWNER to postgres;
+
+
+-- Table: public.place
+
+-- DROP TABLE public.place
+
+CREATE TABLE IF NOT EXISTS public.place
+(
+    id integer NOT NULL DEFAULT nextval('place_id_seq'::regclass),
+    name character varying(15) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT place_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.place
+    OWNER to postgres;
+
+
+-- Table: public.publishing
+
+-- DROP TABLE public.publishing;
+
+CREATE TABLE IF NOT EXISTS public.publishing
+(
+    id integer NOT NULL DEFAULT nextval('publishing_id_seq'::regclass),
+    name character varying(150) COLLATE pg_catalog."default",
+    CONSTRAINT publishing_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.publishing
+    OWNER to postgres;
+
+
+-- Table: public.reader_book
+
+-- DROP TABLE public.reader_book;
+
+CREATE TABLE IF NOT EXISTS public.reader_book
+(
+    id integer NOT NULL DEFAULT nextval('reader_book_id_seq'::regclass),
+    date_begin date,
+    date_end date,
+    id_user integer NOT NULL DEFAULT 1,
+    id_book integer NOT NULL DEFAULT 1,
+    id_status integer NOT NULL DEFAULT 1,
+    id_place integer NOT NULL DEFAULT 1,
+    CONSTRAINT reader_book_pkey PRIMARY KEY (id),
+    CONSTRAINT id_book_fk FOREIGN KEY (id_book)
+        REFERENCES public.book (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT id_place_fk FOREIGN KEY (id_place)
+        REFERENCES public.place (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT id_status_fk FOREIGN KEY (id_status)
+        REFERENCES public.status_book (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT id_user_fk FOREIGN KEY (id_user)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.reader_book
+    OWNER to postgres;
+
+-- Trigger: reader_book_delete_tr
+
+-- DROP TRIGGER reader_book_delete_tr ON public.reader_book;
+
+CREATE TRIGGER reader_book_delete_tr
+    AFTER DELETE
+    ON public.reader_book
+    FOR EACH ROW
+    EXECUTE FUNCTION public.reader_book_delete_trigger();
+
+-- Trigger: reader_book_insert_tr
+
+-- DROP TRIGGER reader_book_insert_tr ON public.reader_book;
+
+CREATE TRIGGER reader_book_insert_tr
+    AFTER INSERT
+    ON public.reader_book
+    FOR EACH ROW
+    EXECUTE FUNCTION public.reader_book_insert_trigger();
+
+-- Trigger: reader_book_update_tr
+
+-- DROP TRIGGER reader_book_update_tr ON public.reader_book;
+
+CREATE TRIGGER reader_book_update_tr
+    AFTER UPDATE 
+    ON public.reader_book
+    FOR EACH ROW
+    EXECUTE FUNCTION public.reader_book_update_trigger();
+
+
+-- Table: public.roles
+
+-- DROP TABLE public.roles;
+
+CREATE TABLE IF NOT EXISTS public.roles
+(
+    role_id integer NOT NULL GENERATED BY DEFAULT AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    name character varying(45) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT roles_pkey PRIMARY KEY (role_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.roles
+    OWNER to postgres;
+
+
+-- Table: public.status_book
+
+-- DROP TABLE public.status_book;
+
+CREATE TABLE IF NOT EXISTS public.status_book
+(
+    id integer NOT NULL DEFAULT nextval('status_id_seq'::regclass),
+    name character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT status_book_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.status_book
+    OWNER to postgres;
+
+
+-- Table: public.status_order
+
+-- DROP TABLE public.status_order;
+
+CREATE TABLE IF NOT EXISTS public.status_order
+(
+    id integer NOT NULL DEFAULT nextval('status_id_seq'::regclass),
+    name character varying(15) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT status_order_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.status_order
+    OWNER to postgres;
+
+
+-- Table: public.subject
+
+-- DROP TABLE public.subject;
+
+CREATE TABLE IF NOT EXISTS public.subject
+(
+    id integer NOT NULL DEFAULT nextval('subject_id_seq'::regclass),
+    name character varying(150) COLLATE pg_catalog."default",
+    CONSTRAINT subject_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.subject
+    OWNER to postgres;
+
+
+-- Table: public.users
+
+-- DROP TABLE public.users;
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    username character varying(45) COLLATE pg_catalog."default" NOT NULL,
+    user_password character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    enabled integer NOT NULL DEFAULT 1,
+    user_id integer NOT NULL DEFAULT nextval('user_id_seq'::regclass),
+    CONSTRAINT user_pk PRIMARY KEY (user_id),
+    CONSTRAINT email UNIQUE (username)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.users
+    OWNER to postgres;
+
+-- Trigger: user_delete_tr
+
+-- DROP TRIGGER user_delete_tr ON public.users;
+
+CREATE TRIGGER user_delete_tr
+    AFTER DELETE
+    ON public.users
+    REFERENCING OLD TABLE AS deleted_rows
+    FOR EACH STATEMENT
+    EXECUTE FUNCTION public.users_delete_trigger();
+
+-- Trigger: users_insert_tr
+
+-- DROP TRIGGER users_insert_tr ON public.users;
+
+CREATE TRIGGER users_insert_tr
+    AFTER INSERT
+    ON public.users
+    FOR EACH ROW
+    EXECUTE FUNCTION public.users_insert_trigger();
+
+
+-- Table: public.users_roles
+
+-- DROP TABLE public.users_roles;
+
+CREATE TABLE IF NOT EXISTS public.users_roles
+(
+    user_id integer NOT NULL,
+    role_id integer NOT NULL,
+    CONSTRAINT role_fk FOREIGN KEY (role_id)
+        REFERENCES public.roles (role_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID,
+    CONSTRAINT user_fk FOREIGN KEY (user_id)
+        REFERENCES public.users (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.users_roles
+    OWNER to postgres;
+-- Index: role_fk_ind
+
+-- DROP INDEX public.role_fk_ind;
+
+CREATE INDEX role_fk_ind
+    ON public.users_roles USING btree
+    (role_id DESC NULLS FIRST)
+    TABLESPACE pg_default;
+-- Index: user_fk_ind
+
+-- DROP INDEX public.user_fk_ind;
+
+CREATE INDEX user_fk_ind
+    ON public.users_roles USING btree
+    (user_id DESC NULLS FIRST)
+    TABLESPACE pg_default;
+
+
+
+
+
+
+
+-- FUNCTION: public.book_insert_trigger()
+
+-- DROP FUNCTION public.book_insert_trigger();
+
+CREATE FUNCTION public.book_insert_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+ 		
+    update book set available = new.count where id = new.id;
+
+    return null;
+end;
+$BODY$;
+
+ALTER FUNCTION public.book_insert_trigger()
+    OWNER TO postgres;
+
+-- FUNCTION: public.book_update_trigger()
+
+-- DROP FUNCTION public.book_update_trigger();
+
+CREATE FUNCTION public.book_update_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+DECLARE
+    av integer;
+begin
+	if old.count<>new.count THEN
+		new.available = old.available - old.count + new.count;
+	-- update book set available = av where book.id=new.id;
+	
+	 end if;
+	 return new;
+end;
+$BODY$;
+
+ALTER FUNCTION public.book_update_trigger()
+    OWNER TO postgres;
+
+
+-- FUNCTION: public.order_delete_trigger()
+
+-- DROP FUNCTION public.order_delete_trigger();
+
+CREATE FUNCTION public.order_delete_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+ 		
+    delete from order_book where id_order = old.id;
+	return null; 
+end;
+$BODY$;
+
+ALTER FUNCTION public.order_delete_trigger()
+    OWNER TO postgres;
+
+
+-- FUNCTION: public.order_insert_trigger()
+
+-- DROP FUNCTION public.order_insert_trigger();
+
+CREATE FUNCTION public.order_insert_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+ 		
+    update orders set num_order = to_char(date_order, 'DDMMYY')||id;
+
+    return null;
+end;
+$BODY$;
+
+ALTER FUNCTION public.order_insert_trigger()
+    OWNER TO postgres;
+
+
+
+-- FUNCTION: public.reader_book_delete_trigger()
+
+-- DROP FUNCTION public.reader_book_delete_trigger();
+
+CREATE FUNCTION public.reader_book_delete_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+ 		
+    update book b set available = b.available + 1 where b.id = old.id_book;
+
+    return null;
+end;
+$BODY$;
+
+ALTER FUNCTION public.reader_book_delete_trigger()
+    OWNER TO postgres;
+
+
+-- FUNCTION: public.reader_book_insert_trigger()
+
+-- DROP FUNCTION public.reader_book_insert_trigger();
+
+CREATE FUNCTION public.reader_book_insert_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+ 		
+    update book b set available = b.available - 1 where b.id = new.id_book;
+
+    return null;
+end;
+$BODY$;
+
+ALTER FUNCTION public.reader_book_insert_trigger()
+    OWNER TO postgres;
+
+
+-- FUNCTION: public.reader_book_update_trigger()
+
+-- DROP FUNCTION public.reader_book_update_trigger();
+
+CREATE FUNCTION public.reader_book_update_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+	if new.id_status = 2 then
+		update book b set available = b.available + 1 where b.id = new.id_book;
+	end if;
+
+	return null;
+end;
+$BODY$;
+
+ALTER FUNCTION public.reader_book_update_trigger()
+    OWNER TO postgres;
+
+
+-- FUNCTION: public.users_delete_trigger()
+
+-- DROP FUNCTION public.users_delete_trigger();
+
+CREATE FUNCTION public.users_delete_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+ 		
+    delete from users_roles where users_roles.user_id = old.user_id;
+	delete from person where person.id = old.user_id;
+
+    return null; 
+end;
+$BODY$;
+
+ALTER FUNCTION public.users_delete_trigger()
+    OWNER TO postgres;
+
+
+-- FUNCTION: public.users_insert_trigger()
+
+-- DROP FUNCTION public.users_insert_trigger();
+
+CREATE FUNCTION public.users_insert_trigger()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE NOT LEAKPROOF
+AS $BODY$
+begin
+ 	
+	INSERT INTO person(
+	id, fname, iname, oname, email, passportnumber, passportwho, adress, phone, id_gender)
+	VALUES (new.user_id, new.username, '', '', '', '',  '', '', '', 1);
+    
+    return null;
+end;
+$BODY$;
+
+ALTER FUNCTION public.users_insert_trigger()
+    OWNER TO postgres;

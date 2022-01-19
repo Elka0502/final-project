@@ -1,0 +1,6 @@
+<form id="contact" sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post">
+	<button type="submit" class="button" style="position: relative; left: 100%; top: -90px;">Выйти</button>
+</form>
+<form id="contact" sec:authorize="isAnonymous()" th:action="@{/login}" method="post">
+    <button type="submit" class="button" style="position: relative; left: 100%; top: -90px;">Войти</button>
+</form>

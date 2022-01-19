@@ -1,0 +1,49 @@
+<!-- Sidebar -->
+<div id="sidebar" style="width:300px">
+  <div class="inner">
+    
+    <!-- Menu -->
+    <nav id="menu">
+      <ul style="width:260px">
+        <li><a th:href="@{/index}">Главная</a></li>
+        <li><a th:href="@{/catalog/}">Каталог</a></li>
+        <li><a th:href="@{/news/show}">Новости</a></li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+        	<a sec:authorize="hasAnyAuthority('ADMIN')" th:href="@{/news/}">Добавление новостей</a>
+        </li>
+        <li sec:authorize="hasAnyAuthority('LIB')" >
+      		<a sec:authorize="hasAnyAuthority('LIB')" th:href="@{/person/readers/}">Читатели</a>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+        	<a sec:authorize="hasAnyAuthority('ADMIN')" th:href="@{/access/}">Предоставление доступа</a>
+        </li>
+        <li sec:authorize="hasAnyAuthority('READER')">
+        	<a sec:authorize="hasAnyAuthority('READER')" th:href="@{/profile/reader/}">Мои заказы и книги</a>
+        </li>
+        <li sec:authorize="isAuthenticated()">
+          <span class="opener">Мой аккаунт</span>
+          <ul>
+            <li><a th:href="@{/person/}" >Настройка аккаунта</a></li>
+            <li><a th:href="@{/person/newPasswordLogin/}">Сменить пароль</a></li>
+          </ul>
+        </li>
+        <li sec:authorize="hasAnyAuthority('ADMIN')">
+          <span class="opener">Справочники</span>
+          <ul>
+            <li><a th:href="@{/book/}">Книги</a></li>
+            <li><a th:href="@{/author/}">Авторы</a></li>
+            <li><a th:href="@{/publishing/}">Издательства</a></li>
+            <li><a th:href="@{/kindOfBook/}">Виды издания</a></li>
+            <li><a th:href="@{/subject/}">Тематики</a></li>
+            <li><a th:href="@{/language}">Языки</a></li>
+          </ul>
+        </li>
+        <li sec:authorize="isAnonymous()">
+        	<a sec:authorize="isAnonymous()" th:href="@{/person/newPasswordLogin/}">Регистрация</a>
+        </li>
+        <li><a th:href="@{/contacts}">Контакты</a></li>
+      </ul>
+    </nav>
+    
+  </div>
+</div>

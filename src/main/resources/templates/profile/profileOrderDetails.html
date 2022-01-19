@@ -1,0 +1,80 @@
+<span th:if="${passwordMessage}" th:utext="${passwordMessage}" style="color:red;font-style:italic;"/>
+<form action="#" th:object="${person}" method="post">
+	<th:block th:insert="block/service"></th:block>
+	<div class="col-md-6">
+    	 <div class="section-heading">
+   		  	<h2>Детали заказа № <span th:text="${orderBook.numOrder}"></span></h2> 
+    	 </div>
+	</div>
+
+	<section  th:if="${!listBooks.isEmpty}" class="forms">
+		<!-- Tables -->
+		<div class="container-fluid">
+  			<div class="row">
+    			<div class="col-md-12">
+      				<span th:text="${'Страница ' + (listBooks.number + 1) + ' из ' + listBooks.totalPages}"></span>
+      				<div class="default-table">
+      					<table>
+          					<thead>
+            					<tr>
+              						<th>Инв.№</th> 
+        							<th>Книга</th> 
+        							<th width="130">Дата <br/> выдачи</th>
+              						<th width="130">Дата <br/> сдачи</th>
+              						<th>Место <br/> выдачи</th> 
+  									</th>
+            					</tr>
+          					</thead>
+          					<tbody>
+            					<tr th:each="book : ${listBooks}">
+					            	<td th:text="${book.getNumBook}">Инв.номер</td>
+					           	    <td th:text="${book.getNameBook}">Книга</td>
+					           	    <td th:text="${book.getDateBeginString}" >Дата выдачи</td>
+					           	    <td th:text="${book.getDateEndString}" >Дата сдачи</td>
+					           	    <td th:text="${book.getNamePlace}">Место</td>
+					           	    <td th:if="${book.idStatus != 4}" th:text="${book.getStatusName}">Статус</td>
+           	    					<td>
+           								<div th:if="${listBooks.toList().size() > 1}" class="primary-button">
+             								<a th:if="${book.idStatus == 4}" th:href="@{/profile/deleteBookFromOrder/{id}(id=${book.id})}">Удалить</a>
+           								</div>
+                 	 				</td>
+			 					</tr>
+          					</tbody>
+        				</table>
+
+				        <div class="row">
+				 			<div th:if="${listBooks.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+				          		<ul class="table-pagination">
+				           			<li th:unless="${listBooks.number == 0}">
+				           				<a th:href="@{/profile/profileOrderDetails/(pageSize=${selectedPageSize}, page=${listBooks.number}, id=${orderBook.id})}">Предыдущая</a>
+				           			</li>
+				           			<li th:if="${listBooks.number == 0}" style="pointer-events: none; cursor: default;">
+				           				<a>Предыдущая</a>
+				           			</li>
+				           			<li th:class="${listBooks.number == (page - 1)} ? 'active'" th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+				             		  	<a th:href="@{/profile/profileOrderDetails/(pageSize=${selectedPageSize}, page=${page}, id=${orderBook.id})}" th:text="${page}"></a>
+				      		   		</li>
+				      		   		<li th:unless="${listBooks.number + 1 == listBooks.totalPages}">
+				              			<a th:href="@{/profile/profileOrderDetails/(pageSize=${selectedPageSize}, page=${listBooks.number + 2}, id=${orderBook.id})}">Следующая</a>
+				          	   		</li>
+				          	   		<li th:if="${listBooks.number + 1 == listBooks.totalPages}" style="pointer-events: none; cursor: default;">
+				              			<a>Следующая</a>
+				          	   		</li>
+				               	</ul>
+				         	</div>
+				         
+	   					     <span><br/>Вывести записей на странице</span>
+	     					 <div class="col-md-2">
+		         				 <select class="form-control pagination" id="pageSizeSelect">
+		             				 <option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+		                 					 th:value="${pageSize}"
+		                 					 th:selected="${pageSize} == ${selectedPageSize}"/>
+		         				 </select>
+	     					 </div>
+     	 			    </div>
+      				</div>
+    			</div>
+  			</div>
+		</div>
+	</section>
+</form>   

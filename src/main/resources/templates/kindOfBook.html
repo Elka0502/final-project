@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Справочник "Виды издания"</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+    <body class="is-preload">
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+					<th:block th:insert="block/header"></th:block>	
+			 		<th:block th:insert="block/buttonLog"></th:block>
+			  		
+			  		<!-- Forms -->
+		            <section class="forms">
+		             	<div class="container-fluid">
+		               		<div class="row">
+		                 		<div class="col-md-12">
+			                      	<div class="section-heading">
+			                    		<h2>Справочник "Виды издания"</h2>
+			                    	</div>
+			              	 		<span th:if="${error}" th:utext="${error}" style="color:red;font-style:italic;"/> <br/>
+		       					    <button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#newModal'}">Добавить</button>
+	                      		    <th:block th:insert="newModel/newKindOfBook"></th:block>
+		                  		</div>
+		               		</div>
+		             	</div>
+		
+				     <!-- Tables -->
+		             <div th:if="${!listKindOfBooks.isEmpty}" class="container-fluid">
+		               	<div class="row">
+		                 	<div class="col-md-12">
+		                   		<span th:text="${'Страница ' + (listKindOfBooks.number + 1) + ' из ' + listKindOfBooks.totalPages}"></span>
+		                   			<div class="default-table">
+		                     			<table>
+		                       				<thead>
+		                         				<tr>
+						                           <th/>
+						                           <th  width="130">  </th>
+						                           <th  width="130">  </th>
+						                        </tr>
+		                       				</thead>
+		                       				<tbody>
+		                        				<tr th:each="kindOfBook : ${listKindOfBooks}">
+												    <td th:text="${kindOfBook.name}">Name</td>
+											        <td>
+									      		      <button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#editModal'+kindOfBook.id}">Изменить</button>
+								                    </td>
+								                    <td>
+								                      <div class="primary-button">
+								                        <a th:href="@{/kindOfBook/delete/{id}(id=${kindOfBook.id})}">Удалить</a>
+								                      </div>
+			                                            <th:block th:insert="editModel/editKindOfBook"></th:block>
+													</td>
+		             			 				</tr>
+		                       				</tbody>
+		                     			</table>
+		                     
+										<div class="row">
+				            				<div th:if="${listKindOfBooks.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+			                      				<ul class="table-pagination">
+			                       					<li th:unless="${listKindOfBooks.number == 0}">
+			                       						<a th:href="@{/kindOfBook/(pageSize=${selectedPageSize}, page=${listKindOfBooks.number})}">Предыдущая</a>
+			                       					</li>
+			                       					<li th:if="${listKindOfBooks.number == 0}" style="pointer-events: none; cursor: default;">
+			                       						<a>Предыдущая</a>
+			                       					</li>
+			                       					<li th:class="${listKindOfBooks.number == (page - 1)} ? 'active'" th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+	                           		  					<a th:href="@{/kindOfBook/(pageSize=${selectedPageSize}, page=${page})}" th:text="${page}"></a>
+	                    		   					</li>
+	                    		   					<li th:unless="${listKindOfBooks.number + 1 == listKindOfBooks.totalPages}">
+	                            						<a th:href="@{/kindOfBook/(pageSize=${selectedPageSize}, page=${listKindOfBooks.number + 2})}">Следующая</a>
+	                        	   					</li>
+	                        	   					<li th:if="${listKindOfBooks.number + 1 == listKindOfBooks.totalPages}" style="pointer-events: none; cursor: default;">
+	                            						<a>Следующая</a>
+	                        	   					</li>
+	                             				</ul>
+		                      				</div>
+		                      
+		                      				<span><br/>Вывести записей на странице</span>
+				                			<div class="col-md-2">
+				                    			<select class="form-control pagination" id="pageSizeSelect">
+				                        			<option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+				                            				th:value="${pageSize}"
+				                            				th:selected="${pageSize} == ${selectedPageSize}"/>
+				                    			</select>
+				                			</div>
+				                		</div>
+		                   			</div>
+		                 		</div>
+		              		 </div>
+		             	</div>
+	                </section>
+	           	</div>
+        	</div> 
+	    	<th:block th:insert="block/menu"></th:block>	
+    	</div>
+
+   		<th:block th:insert="block/scriptJs"></th:block>	
+   
+  		<script th:inline="javascript">
+  		/*<![CDATA[*/
+	        $(document).ready(function() {
+	   			 changePageAndSize();
+			});
+	 
+			function changePageAndSize() {
+	   			 $('#pageSizeSelect').change(function(evt) {
+	    		    window.location.replace("/kindOfBook/?pageSize=" + this.value + "&page=1");
+	  		     });
+			}
+		/*]]>*/
+	    </script>
+   	</body>
+</html>

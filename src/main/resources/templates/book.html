@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Справочник "Книги"</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+
+	<body class="is-preload">
+		 
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+					<th:block th:insert="block/header"></th:block>	
+			 		<th:block th:insert="block/buttonLog"></th:block>
+			  		
+			  		<!-- Forms -->
+		            <section class="forms">
+		            	<div class="container-fluid">
+		               		<div class="row">
+		                 		<div class="col-md-12">
+			                  		<div class="col-md-6">
+			                    		<div class="section-heading">
+			                    			<h2>Справочник "Книги"</h2>
+			                    		</div>
+			              	  		</div>
+			              	  		<span th:if="${error}" th:utext="${error}" style="color:red;font-style:italic;"/> <br/>
+		       					    <button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#newModal'}">Добавить</button>
+	                      			<th:block th:insert="newModel/newBook"></th:block>
+		                  		</div>
+		               		</div>
+		             </div>
+		
+				     <!-- Tables -->
+		             <div th:if="${!listbooks.isEmpty}" class="container-fluid">
+		               	<div class="row">
+		                 	<div class="col-md-12">
+		                   		<span th:text="${'Страница ' + (listbooks.number + 1) + ' из ' + listbooks.totalPages}"></span>
+		                   			<div class="default-table">
+		                   
+		                     			<table style="table-layout: fixed; width: 100% ">
+					                        <thead>
+					                          <tr>
+					                           	 <th width="100">Инв.№</th>
+					                             <th>Книга</th>
+								           	     <th  width="100">Всего/Доступно</th> 
+								            	 <th  width="130"> </th>
+								                 <th  width="130"> </th>
+					                          </tr>
+					                        </thead>
+		                       				<tbody>
+		                         				<tr th:each="book : ${listbooks}">
+					                          		<td th:text="${book.id}">Инв. номер</td>
+												    <td th:text="${book.getStringBook}" width="1000">Наименование</td>
+									                <td th:text="${book.count + '/' +book.available}">Всего</td>
+									                <td  width="70">
+									      		      	<button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#editModal'+book.id}">Изменить</button>
+								                    </td>
+								                    <td  width="70">
+								                      	<div class="primary-button">
+								                        	<a th:href="@{/book/delete/{id}(id=${book.id})}">Удалить</a>
+								                      	</div>
+			                                            <th:block th:insert="editModel/editBook"></th:block>
+													</td>
+		             			 				</tr>
+		                       				</tbody>
+		                     			</table>
+		
+		                     			<div class="row">
+				            				<div th:if="${listbooks.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+			                      				<ul class="table-pagination">
+			                       					<li th:unless="${listbooks.number == 0}">
+			                       						<a th:href="@{/book/(pageSize=${selectedPageSize}, page=${listbooks.number})}">Предыдущая</a>
+			                       					</li>
+			                       					<li th:if="${listbooks.number == 0}" style="pointer-events: none; cursor: default;">
+			                       						<a>Предыдущая</a>
+			                       					</li>
+			                       					<li th:class="${listbooks.number == (page - 1)} ? 'active'" th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+	                           		  					<a th:href="@{/book/(pageSize=${selectedPageSize}, page=${page})}" th:text="${page}"></a>
+	                    		   					</li>
+	                    		   					<li th:unless="${listbooks.number + 1 == listbooks.totalPages}">
+	                            						<a th:href="@{/book/(pageSize=${selectedPageSize}, page=${listbooks.number + 2})}">Следующая</a>
+	                        	   					</li>
+	                        	   					<li th:if="${listbooks.number + 1 == listbooks.totalPages}" style="pointer-events: none; cursor: default;">
+	                            						<a>Следующая</a>
+	                        	   					</li>
+	                             				</ul>
+		                      				</div>
+		                      
+		                      				<span><br/>Вывести записей на странице</span>
+				                			<div class="col-md-2">
+				                    			<select class="form-control pagination" id="pageSizeSelect">
+				                        			<option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+				                           					th:value="${pageSize}"
+				                            				th:selected="${pageSize} == ${selectedPageSize}"/>
+				                    			</select>
+				                			</div>
+				       		 			</div>
+		                   			</div>
+		                 		</div>
+		               		</div>
+		             	</div>
+	                </section>
+            	</div>
+        	</div> 
+
+		   <th:block th:insert="block/menu"></th:block>	
+      
+      	</div>
+
+   		<th:block th:insert="block/scriptJs"></th:block>	
+   
+  		 <script th:inline="javascript">
+  		/*<![CDATA[*/
+	        $(document).ready(function() {
+	   			 changePageAndSize();
+			});
+	 
+			function changePageAndSize() {
+	   			 $('#pageSizeSelect').change(function(evt) {
+	    		    window.location.replace("/book/?pageSize=" + this.value + "&page=1");
+	  		     });
+			}
+		/*]]>*/
+	    </script>
+   	</body>
+</html>

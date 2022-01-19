@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Авторизация</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+	<body class="is-preload">
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+			 		 <th:block th:insert="block/header"></th:block>	
+					 <th:block th:insert="block/buttonLog"></th:block>
+                 
+	                 <!-- Forms -->
+		             <section class="forms">
+		              	<div class="container-fluid">
+		                	<div class="row">
+		                  		<div class="col-md-12">
+		                    		<div class="col-md-6">
+		                      			<div class="section-heading">
+			                     			<h2>Авторизация</h2>
+			                  			</div>
+		               				</div>
+		               				 <div th:if="${param.error}">
+					            		Неверный логин или пароль.
+					        		</div>
+					        		<div th:if="${param.logout}">
+					            		Вы вышли из системы.
+					        		</div>
+					        		<span th:if="${saveUserMessage}" th:utext="${saveUserMessage}" style="color:red; font-style:italic;"/>
+	        						<form id="contact" th:action="@{/login}" method="post">
+		                      			<div class="col-md-4">
+		                        			<fieldset>
+		                          				<input name="username" type="text" class="form-control" id="username" placeholder="Логин..." required>
+		                        			</fieldset>
+		                      			</div>
+		                      			<div class="col-md-4">
+			                    			<fieldset>
+			                      				<input name="password" type="password" class="form-control" id="password" placeholder="Пароль..." required>
+			                    			</fieldset>
+			                  			</div>
+			                  			<div class="col-md-12">
+			                    			<button type="submit" class="button">Войти</button>
+											&nbsp &nbsp &nbsp &nbsp
+						        			<a th:href="@{/person/newPasswordLogin/}">Регистрация</a>
+						       
+	                          			</div>
+			                		</form>
+		                  		</div>
+		                	</div>
+		              	</div>
+		            </section>
+            	</div>
+        	</div> 
+		   <th:block th:insert="block/menu"></th:block>	
+       	</div>
+ 		<th:block th:insert="block/scriptJs"></th:block>	
+   	</body>
+</html>

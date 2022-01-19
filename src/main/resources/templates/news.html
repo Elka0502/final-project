@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Новости</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+    <body class="is-preload">
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+           			<th:block th:insert="block/header"></th:block>	
+			  		<th:block th:insert="block/buttonLog"></th:block>
+			  		
+			  		<!-- Forms -->
+		            <section class="forms">
+		             	<div class="container-fluid">
+		               		<div class="row">
+		                		<div class="col-md-12">
+			                  		<div class="col-md-6">
+			                    		<div class="section-heading">
+			                    	       	<h2>Новости</h2>
+			                    		</div>
+			              	  		</div>
+			              	  		<span th:if="${error}" th:utext="${error}" style="color:red;font-style:italic;"/>
+		       				  		<button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#newModal'}">Добавить</button>
+	                		  		<th:block th:insert="newModel/newNews"></th:block>
+	                		 	</div>
+	                      </div>
+		             	</div>
+		             
+		             	<!-- Tables -->
+		             	<div th:if="${!listNews.isEmpty}" class="container-fluid">
+		               		<div class="row">
+		                 		<div class="col-md-12">
+		                    		<span th:text="${'Страница ' + (listNews.number + 1) + ' из ' + listNews.totalPages}"></span>
+		                   			<div class="default-table">
+		                     			<table>
+					                       <thead>
+					                         <tr>
+					                         	<th width="130">Дата</th>
+					                            <th>Загаловок 1</th>
+					                            <th width="80"></th>
+								                <th width="80"></th>
+								                <th width="80"></th>
+					                         </tr>
+					                       </thead>
+		                       				<tbody>
+						                        <tr th:each="news : ${listNews}">
+						                         	 <td th:if="${news.getStatus == 1}" th:text="${#dates.format(news.dateNews, 'dd-MM-yyyy')}" style="font-weight: bold;">Date</td>
+					                        		 <td th:if="${news.getStatus == 0}" th:text="${#dates.format(news.dateNews, 'dd-MM-yyyy')}">Date</td>
+												     <td th:if="${news.getStatus == 1}" th:text="${news.text1}" style="font-weight: bold;"></td>
+												     <td th:if="${news.getStatus == 0}" th:text="${news.text1}"></td>
+											         <td>
+													    <button class="button" data-toggle="modal" th:attr="data-target=${'#newModal'+news.id}">Просмотр</button>
+									              		<th:block th:insert="newsImage"></th:block>
+													 </td>
+													 <td>
+													 	<button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#editModal'+news.id}">Изменить</button>
+														<th:block th:insert="editModel/editNews"></th:block>
+													 </td>
+								                     <td>
+								                      <div class="primary-button">
+								                        <a th:href="@{/news/delete/{id}(id=${news.id})}">Удалить</a>
+								                      </div>
+				                                          
+													 </td>
+													 
+						             			</tr>
+		                       				</tbody>
+		                     			</table>
+		                     
+							 			<div class="row">
+							            	<div th:if="${listNews.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+						                      	<ul class="table-pagination">
+						                       		<li th:unless="${listNews.number == 0}">
+						                       			<a th:href="@{/language/(pageSize=${selectedPageSize}, page=${listNews.number})}">Предыдущая</a>
+						                       		</li>
+						                       		<li th:if="${listNews.number == 0}" style="pointer-events: none; cursor: default;">
+						                       			<a>Предыдущая</a>
+						                       		</li>
+						                       		<li th:class="${listNews.number == (page - 1)} ? 'active'" th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+				                           		  		<a th:href="@{/news/(pageSize=${selectedPageSize}, page=${page})}" th:text="${page}"></a>
+				                    		   		</li>
+				                    		   		<li th:unless="${listNews.number + 1 == listNews.totalPages}">
+				                            			<a th:href="@{/news/(pageSize=${selectedPageSize}, page=${listNews.number + 2})}">Следующая</a>
+				                        	   		</li>
+				                        	   		<li th:if="${listNews.number + 1 == listNews.totalPages}" style="pointer-events: none; cursor: default;">
+				                            			<a>Следующая</a>
+				                        	   		</li>
+				                             	</ul>
+					                      	</div>
+		                      
+		                      				<span><br/>Вывести записей на странице</span>
+				                			<div class="col-md-2">
+				                    			<select class="form-control pagination" id="pageSizeSelect">
+				                        			<option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+				                            				th:value="${pageSize}"
+				                            				th:selected="${pageSize} == ${selectedPageSize}"/>
+				                    			</select>
+				                			</div>
+				           			 </div>
+		                   		</div>
+		                 	</div>
+		               	</div>
+		             </div>
+		        </section>
+  	  	  	</div>
+       	</div> 
+  	    <th:block th:insert="block/menu"></th:block>	
+     	</div>
+ 		<th:block th:insert="block/scriptJs"></th:block>	
+   
+   		<script th:inline="javascript">
+   		/*<![CDATA[*/
+	        $(document).ready(function() {
+	   			 changePageAndSize();
+			});
+	 
+			function changePageAndSize() {
+	   			 $('#pageSizeSelect').change(function(evt) {
+	    		    window.location.replace("/news/?pageSize=" + this.value + "&page=1");
+	  		     });
+			}
+		/*]]>*/
+	    </script>
+	</body>
+</html>

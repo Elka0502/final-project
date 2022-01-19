@@ -1,0 +1,38 @@
+ <h2 sec:authorize="hasAnyAuthority('LIB', 'ADMIN')">
+ 	<span style="color:#007bff" th:text="${person.getFio}"></span>
+ </h2>
+ 
+ <!-- Services -->
+<section class="services">
+  <div class="container-fluid">
+    <div class="row">
+       <div sec:authorize="hasAnyAuthority('LIB', 'ADMIN')" class="col-md-4">
+        <div class="service-item first-item">
+          <div class="icon"></div>
+       	  <h4><a th:href="@{/profile/{id}(id=${person.id})}">Профиль</a></h4>
+        </div>
+      </div>
+      
+      <div sec:authorize="hasAnyAuthority('READER')" class="col-md-4">
+        <div class="service-item first-item">
+          <div class="icon"></div>
+       	  <h4><a th:href="@{/profile/profileBasket/(id=${person.id})}" >Корзина</a></h4>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="service-item third-item">
+          <div class="icon"></div>
+          <h4><a th:href="@{/profile/profileOrder/(id=${person.id})}">Заказы</a></h4>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="service-item second-item">
+          <div class="icon"></div>
+       	  <h4><a th:href="@{/profile/profileBook/(id=${person.id})}">Книги</a></h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

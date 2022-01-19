@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Каталог</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+	<body class="is-preload">
+		 
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+					<th:block th:insert="block/header"></th:block>	
+			  		<th:block th:insert="block/buttonLog"></th:block>
+			  		
+			  		<!-- Forms -->
+		            <section class="forms">
+		            	<div class="container-fluid">
+		               		<div class="row">
+		                 		<div class="col-md-12">
+			                  		<div class="col-md-6">
+			                    		<div class="section-heading">
+			                    			<h2>Каталог</h2>
+			                    		</div>
+			              	  		</div>
+			              	  	    <form action="#" th:action="@{/catalog/find}" th:object="${book}" method="post">
+							     		<table>
+							     			<tr>
+						                 		<td style="text-align: right;">
+			                 			 			<label>Автор:</label> 	 
+			               				 		</td>
+			               				  		<td>
+			                 						<input type="text" th:name="author"/>	 
+			               				 		</td>
+			               				  		<td style="text-align: right;">
+			                 						<label>Наименование:</label> 	 
+			               				 		</td>
+			               				  		<td>
+			                 						<input type="text" th:field="*{name}"/>	 
+			               				 		</td>
+			               			  		</tr>
+			               			  		<tr style="background: #ffffff;"> 
+			               				  		<td style="text-align: right;">
+			                 						<label>Издательство:</label>	 
+			               				 		</td>
+			               				  		<td>
+			                 						<select th:field="*{idpublishing}">
+		    											<option th:each="publishing : ${listpublishings}"
+		  														th:value="${publishing.id}"
+		  														th:text="${publishing.name}"/>
+													</select>	 
+			               				 		</td>
+			            			    		 <td style="text-align: right;">
+			                 						<label>Вид издания:</label>	 
+			               				  		</td>
+			               				  		<td>
+			                 						<select th:field="*{idkindOfBook}">
+		    											<option th:each="kindOfBook : ${listkindOfBooks}"
+		  														th:value="${kindOfBook.id}"
+		  														th:text="${kindOfBook.name}"/>
+													</select>	 
+			               				 		</td>
+			               				 	</tr>
+			               				 	<tr>
+			               				 		<td style="text-align: right;">
+			                 						<label>Тематика:</label>	 
+			               				  		</td>
+			               				  		<td>
+			                 						<select th:field="*{idsubject}">
+		    											<option th:each="subject : ${listsubjects}"
+		  												th:value="${subject.id}"
+		  												th:text="${subject.name}"/>
+													</select>	 
+			               				 		</td>
+			               				 		<td style="text-align: right;">
+			                 						<label>Язык:</label>	 
+			               				  		</td>
+			               				  		<td>
+			                 						<select th:field="*{idlanguage}">
+		    											<option th:each="language : ${listlanguages}"
+		  														th:value="${language.id}"
+		  														th:text="${language.name}"/>
+													</select>	 
+			               				 		</td>
+			            			  		</tr>
+			            			  		<tr style="background: #ffffff;">
+						                  		<td style="text-align: right;">
+			                 						<label>Год издания:</label> 	 
+			               				  		</td>
+			               				  		<td>
+			                 						<input type="number" th:field="*{year}" min="1900" max="2100" size="4" autocomplete="off" th:value="2021" step="1" style = "width: 8em; " >
+			                 			 	    </td>
+									  		</tr>
+								   		</table>
+							    		<button type="submit" id="form-submit" class="button">Поиск</button>
+					                	<button type="reset" id="form-submit" class="button">Очистить</button>
+			                	    </form>
+								</div>
+		               		</div>
+		             	</div>
+		
+						<span th:if="${error}" th:utext="${error}" style="color:red; font-weight: bolder;font-style:italic;"/> <br/>
+						 
+				     	<!-- Tables -->
+		             	<div  th:if="${!listbooks.isEmpty}" class="container-fluid">
+		               		<div class="row">
+		                 		<div class="col-md-12">
+		                   			<span th:text="${'Страница ' + (listbooks.number + 1) + ' из ' + listbooks.totalPages}"></span>
+		                   				<div class="default-table">
+									        <table>
+		                       					<thead>
+		                         					<tr>
+							                        	<th width = "10">Инв.№</th>
+							                            <th>Книга</th>
+										                <th width = "80">Всего/Доступно</th> 
+										                <th sec:authorize="hasAnyAuthority('READER')">Место выдачи</th>
+										                <th sec:authorize="hasAnyAuthority('READER')"></th>
+		                         					</tr>
+		                       					</thead>
+		                       					<tbody>
+		                         					<tr th:each="book : ${listbooks}">
+		                       							<form action="#" th:action="@{/catalog/inBasket/{id}(id=${book.id})}" method="post">
+							                         		<td th:text="${book.id}">Инв.номер</td>
+														    <td th:text="${book.getStringBook}" width="1000">Наименование</td>
+											                <td th:text="${book.count + '/' + book.available}">Всего</td>
+											                <td th:if="${book.available>0}" sec:authorize="hasAnyAuthority('READER')" style = "valign: middle;"> 
+						                						<select th:value=1 th:name="idPlace" style="width: 65px;" >
+																	<option style = "text-align: left;"
+																			th:each="place : ${listPlaces}"
+																			th:value="${place.id}"
+																			th:text="${place.name}"/>
+																</select>
+															</td>
+															<td th:if="${book.available<=0}" sec:authorize="hasAnyAuthority('READER')"></td>
+						                					<td th:if="${book.available>0}" sec:authorize="hasAnyAuthority('READER')">
+						                 						<button type="submit" id="form-submit" class="button" style="width: 115px">В корзину</button>
+						      	        					</td>
+						      	        					<td th:if="${book.available<=0}" sec:authorize="hasAnyAuthority('READER')"> </td>
+						      	        				</form>
+								 					</tr>
+		                       					</tbody>
+		                     				</table>
+		                  
+					         				<div class="row">
+				            					<div th:if="${listbooks.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+			                      					<ul class="table-pagination">
+			                       						<li th:unless="${listbooks.number == 0}">
+			                       							<a th:href="@{/catalog/(pageSize=${selectedPageSize}, page=${listbooks.number})}">Предыдущая</a>
+			                       						</li>
+			                       						<li th:if="${listbooks.number == 0}" style="pointer-events: none; cursor: default;">
+			                       							<a>Предыдущая</a>
+			                       						</li>
+			                       						<li th:class="${listbooks.number == (page - 1)} ? 'active'" th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+	                           		  						<a th:href="@{/catalog/(pageSize=${selectedPageSize}, page=${page})}" th:text="${page}"></a>
+	                    		   						</li>
+						                    		   	<li th:unless="${listbooks.number + 1 == listbooks.totalPages}">
+						                            		<a th:href="@{/catalog/(pageSize=${selectedPageSize}, page=${listbooks.number + 2})}">Следующая</a>
+						                        	   	</li>
+						                        	   	<li th:if="${listbooks.number + 1 == listbooks.totalPages}" style="pointer-events: none; cursor: default;">
+						                            		<a>Следующая</a>
+						                        	   	</li>
+						                             </ul>
+							                      </div>
+		                                          
+		                                          <span><br/>Вывести записей на странице</span>
+				                				  <div class="col-md-2">
+				                    			  	<select class="form-control pagination" id="pageSizeSelect">
+				                        				<option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+				                            					th:value="${pageSize}"
+				                            					th:selected="${pageSize} == ${selectedPageSize}"/>
+				                    				</select>
+				                				  </div>
+				             		 		 </div>
+		                 				  </div>
+		                			 </div>
+		              			 </div>
+		             		</div>
+	                </section>
+            	</div>
+        	</div> 
+
+		   <th:block th:insert="block/menu"></th:block>	
+      
+      	</div>
+
+   		<th:block th:insert="block/scriptJs"></th:block>	
+   
+	    <script th:inline="javascript">
+	    /*<![CDATA[*/
+	        $(document).ready(function() {
+	   			 changePageAndSize();
+			});
+	 
+			function changePageAndSize() {
+	   			 $('#pageSizeSelect').change(function(evt) {
+	    		    window.location.replace("/catalog/?pageSize=" + this.value + "&page=1");
+	  		     });
+			}
+		/*]]>*/
+	     </script>
+   	</body>
+</html>

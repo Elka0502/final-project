@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Контакты</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+	<body class="is-preload">
+		
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+					<th:block th:insert="block/header"></th:block>	
+			  		<th:block th:insert="block/buttonLog"></th:block>
+			  		<section class="right-image">
+			  			<div class="container-fluid">
+					    	<div class="row">
+					    		<div class="col-md-6">
+					        		<div class="right-content">
+					       	  			<div class="section-heading">
+			                   				<h2>Контакты</h2>
+			                  			</div>
+					          				<h4>Адрес и телефон:</h4>
+					          				<p> Республика Беларусь, г. Гродно, 230000, ул.Библиотечная, 1. <br/>+375(29)1234567</p>
+									        <h4>E-mail:</h4>
+									        <p>library@gmail.by</p>
+									        <h4>Сайт: <p><a th:href="@{/index}">library.com</a></p> </h4>
+					      			</div>
+					      		</div>
+					      		<div class="col-md-6">
+					        		<img th:src="@{/assets/images/contacts.jpg}" alt="">
+					      		</div>
+					    	</div>
+					  	</div>
+					</section>
+        	   	</div>
+        	</div> 
+
+		   <th:block th:insert="block/menu"></th:block>	
+      
+      	</div>
+
+   		<th:block th:insert="block/scriptJs"></th:block>	
+   
+   	</body>
+</html>

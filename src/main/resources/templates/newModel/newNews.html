@@ -1,0 +1,41 @@
+<div class="modal fade" th:attr="id=${'newModal'}"  tabindex="-1" aria-labelledby="newModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+    	<div class="modal-content">
+      		
+      		<div class="modal-header">
+        		<h5 class="modal-title" id="newModalLabel">Добавление новости</h5>
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          			<span aria-hidden="true">&times;</span>
+        		</button>
+      		</div>
+      		
+      		<div class="modal-body">
+        		<form action="#" th:action="@{/news/addNews}"  method="post"  enctype="multipart/form-data">
+        			<div class="col-md-5">
+        				<label>Дата новости <span style="color:red;font-style:italic;">*</span></label>
+    					<input type="date" size = "10" th:field="${news.dateNews}" th:value="*{dateNews}" required/>
+					</div>
+					<div class="col-md-14">
+						<input placeholder="Заголовок 1" type="text" th:value="${news.text1}" th:name="text1" style = "position: relative; right: -15px;"/>
+					</div>
+	   				<div>
+	   					<textarea placeholder="Заголовок 2" style = "position: relative; right: -15px; line-height: 1.5;" th:value="${news.text2}" th:name="text2"></textarea>
+						<textarea placeholder="Текст" style = "position: relative; right: -15px; line-height: 1.5;" th:value="${news.text3}" th:name="text3"></textarea>
+						<select th:value="${news.status}" th:name="status" id="status" style="position: relative; right: -15px; width: 130px;" >
+							<option style = "text-align: left;"
+									th:each="status : ${listStatus}"
+									th:value="${status.id}"
+									th:text="${status.name}"/>
+						</select>
+						<input type="file" th:name="file" accept=".jpg, .jpeg, .png" style = "border: none;"/>
+					</div>	
+	        		<div class="modal-footer">
+	     				<button type="button" class="button" data-dismiss="modal">Отмена</button>
+		      			<button type="submit" id="form-submit" class="button">Сохранить</button>
+		    		</div>
+      			</form>
+      		</div>
+      		
+    	</div>
+  	</div>
+</div>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title th:unless="${newPerson}">Библиотека - Настройка аккаунта</title>
+	    <title th:if="${newPerson}">Библиотека - Новый читатель</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+    <body class="is-preload">
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+					<th:block th:insert="block/header"></th:block>	
+			  		<th:block th:insert="block/buttonLog"></th:block>
+			  		
+			  		<!-- Forms -->
+		            <section class="forms">
+		             	<div class="container-fluid">
+		               		<div class="row">
+		                		<div class="col-md-12">
+			                  		<div class="col-md-6">
+			                    		<div class="section-heading">
+			                    			<h2 th:unless="${newPerson}">Настройка аккаунта</h2>
+			                    			<h2 th:if="${newPerson}" >Новый читатель</h2>
+			                    		</div>
+			              	  		</div>
+			              	  		<span th:if="${passwordMessage}" th:utext="${passwordMessage}" style="color:red;font-style:italic;"/>
+		       						<th:block th:unless="${newPerson}"  th:insert="account/account"></th:block>	
+		       				 		<th:block th:if ="${newPerson}"  th:insert="account/newPerson"></th:block>				 
+							 	</div>
+		               		</div>
+		             	</div>
+			    </section>
+  	  	   	</div>
+       	</div> 
+ 	    <th:block th:insert="block/menu"></th:block>	
+     	</div>
+		<th:block th:insert="block/scriptJs"></th:block>	
+   	</body>
+</html>

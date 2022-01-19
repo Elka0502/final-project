@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+ 	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Читатели</title>
+	    <th:block th:insert="block/css"></th:block>
+	</head>
+	<body class="is-preload">
+		 <!-- Wrapper -->
+    	 <div id="wrapper">
+
+      		<!-- Main -->
+       		<div id="main">
+          		<div class="inner">
+		  			<th:block th:insert="block/header"></th:block>	
+			  		<th:block th:insert="block/buttonLog"></th:block>
+				    <div class="section-heading">
+			           <h2>Читатели</h2>
+			        </div>
+			        
+			 		<section class="forms">
+						<div class="container-fluid">
+			               <div class="row">
+			                 <div class="col-md-12">
+				              	<span th:if="${saveError}" th:utext="${saveError}" style="color:red;font-style:italic;"/> <br/>							 
+		       				    <button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#editModal'}">Найти читателя по номеру заказа</button>
+					            <th:block th:insert="profile/searchOrder"></th:block>
+			                   	<div class="primary-button" style = "margin-top :10px">
+			                   	   <a th:href="@{/person/newPerson}">Добавить читателя</a>
+			                   	</div>
+					         </div>
+			               </div>
+			            </div>
+		             
+				     <!-- Tables -->
+		             <div th:if="${!listReaders.isEmpty}" class="container-fluid">
+		               	<div class="row">
+		                 	<div class="col-md-12">
+		                   		<span th:text="${'Страница ' + (listReaders.number + 1) + ' из ' + listReaders.totalPages}"></span>
+		                   		<div class="default-table">
+		                   			<table style="table-layout: fixed; width: 105% ">
+		                       			<thead>
+		                         			<tr>
+					                           <th>ФИО</th>
+								               <th>Дата рождения</th> 
+					                           <th/>
+					                        </tr>
+		                       			</thead>
+		                       			<tbody>
+		                         			<tr th:each="reader : ${listReaders}">
+											    <td th:text="${reader.getFio}" width="1000">ФИО</td>
+											    <td th:text="${#dates.format(reader.birthday, 'dd-MM-yyyy')}">Дата рождения</td>
+								                <td  width="70">
+							                    	<div class="primary-button">
+							                    	   <a th:href="@{/profile/{id}(id=${reader.id})}">Просмотр</a>
+							                    	</div>
+											   </td>
+											</tr>
+		                       			</tbody>
+		                     		</table>
+		
+		                     		<div class="row">
+				            			<div th:if="${listReaders.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+			                     			<ul class="table-pagination">
+			                       				<li th:unless="${listReaders.number == 0}">
+			                       					<a th:href="@{/person/readers/(pageSize=${selectedPageSize}, page=${listReaders.number})}">Предыдущая</a>
+			                       				</li>
+			                       				<li th:if="${listReaders.number == 0}" style="pointer-events: none; cursor: default;">
+			                       					<a>Предыдущая</a>
+			                       				</li>
+			                       				<li th:class="${listReaders.number == (page - 1)} ? 'active'" th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+	                           		  				<a th:href="@{/person/readers/(pageSize=${selectedPageSize}, page=${page})}" th:text="${page}"></a>
+	                    		   				</li>
+	                    		   				<li th:unless="${listReaders.number + 1 == listReaders.totalPages}">
+	                            					<a th:href="@{/person/readers/(pageSize=${selectedPageSize}, page=${listReaders.number + 2})}">Следующая</a>
+	                        	   				</li>
+	                        	   				<li th:if="${listReaders.number + 1 == listReaders.totalPages}" style="pointer-events: none; cursor: default;">
+	                            					<a>Следующая</a>
+	                        	   				</li>
+	                             			</ul>
+		                      			</div>
+		                      
+		                      			<span><br/>Вывести записей на странице</span>
+				                		<div class="col-md-2">
+					                    	<select class="form-control pagination" id="pageSizeSelect">
+					                        	<option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+					                            		th:value="${pageSize}"
+					                            		th:selected="${pageSize} == ${selectedPageSize}"/>
+					                    	</select>
+				                		</div>
+				             		 </div>
+		                 		  </div>
+		                	 </div>
+		               	</div>
+		             </div>
+				</section>
+ 	       	</div>
+        </div> 
+  	    <th:block th:insert="block/menu"></th:block>	
+      	</div>
+ 		<th:block th:insert="block/scriptJs"></th:block>	
+   
+   		<script th:inline="javascript">
+   		/*<![CDATA[*/
+	        $(document).ready(function() {
+	   			 changePageAndSize();
+			});
+	       
+			function changePageAndSize() {
+				 $('#pageSizeSelect').change(function(evt) {
+					window.location.replace("/person/readers/?pageSize=" + this.value + "&page=1");
+	  		     });
+			}
+		/*]]>*/
+	    </script>
+   	</body>
+</html>

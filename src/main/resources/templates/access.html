@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+	<head>
+		<meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
+	    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
+	    <title>Библиотека - Предоставление доступа</title>
+	    <th:block th:insert="block/css"></th:block>
+	 </head>
+	 <body class="is-preload">
+		 
+		<!-- Wrapper -->
+    	<div id="wrapper">
+
+      	<!-- Main -->
+		<div id="main">
+			<div class="inner">
+          			<th:block th:insert="block/header"></th:block>	
+			  		<th:block th:insert="block/buttonLog"></th:block>
+			  		
+			  		<!-- Forms -->
+		            <section class="forms">
+		            	<div class="container-fluid">
+		                	<div class="row">
+		                 		<div class="col-md-12">
+			                  		<div class="col-md-6">
+			                    		<div class="section-heading">
+			                    			<h2>Предоставление доступа</h2>
+			                    		</div>
+			              	  		</div>
+			              	  		<span th:if="${error}" th:utext="${error}" style="color:red;font-style:italic;"/><br/>
+		       						<button type="submit" id="form-submit" class="button" data-toggle="modal" th:attr="data-target=${'#newModal'}">Добавить</button>
+	                                <th:block th:insert="newModel/newAccess"></th:block>
+		                  		</div>
+		               		</div>
+		             	</div>
+		
+				     	<!-- Tables -->
+			            <div th:if="${!listAccess.isEmpty}" class="container-fluid">
+			               	<div class="row">
+			                 	<div class="col-md-12">
+			                   		<span th:text="${'Страница ' + (listAccess.number + 1) + ' из ' + listAccess.totalPages}"></span>
+			                   		<div class="default-table">
+			                     		<table>
+			                       			<thead>
+			                         			<tr>
+			                           				<th>Логин</th>
+			                           				<th>Роль</th>
+			                           				<th/>
+			                         			</tr>
+			                       			</thead>
+			                       			<tbody>
+			                         			<tr th:each="access : ${listAccess}">
+										    		<td th:text="${access.username}">Name</td>
+										    		<td>
+						                				<span th:each="role : ${access.roles}"> <span th:text="${role.name}"/><br/></span>
+						                			</td>
+									        		<td>
+						                      			<div class="primary-button">
+						                        			<a th:href="@{/access/delete/{id}(id=${access.id})}">Удалить</a>
+						                      			</div>
+													</td>
+			             			 			</tr>
+			                       			</tbody>
+			                     		</table>
+			                     
+			                     		<div class="row">
+					            			<div th:if="${listAccess.totalPages != 1}" class="form-group col-md-11 pagination-centered">
+				                      			<ul class="table-pagination">
+				                       				<li th:unless="${listAccess.number == 0}">
+				                       					<a th:href="@{/access/(pageSize=${selectedPageSize}, page=${listAccess.number})}">Предыдущая</a>
+				                       				</li>
+				                       				<li th:if="${listAccess.number == 0}" style="pointer-events: none; cursor: default;">
+				                       					<a>Предыдущая</a>
+				                       				</li>
+				                       				<li th:class="${listAccess.number == (page - 1)} ? 'active'" th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+		                           		  				<a th:href="@{/access/(pageSize=${selectedPageSize}, page=${page})}" th:text="${page}"></a>
+		                    		   				</li>
+		                    		   				<li th:unless="${listAccess.number + 1 == listAccess.totalPages}">
+		                            					<a th:href="@{/access/(pageSize=${selectedPageSize}, page=${listAccess.number + 2})}">Следующая</a>
+		                        	   				</li>
+		                        	   				<li th:if="${listAccess.number + 1 == listAccess.totalPages}" style="pointer-events: none; cursor: default;">
+		                            					<a>Следующая</a>
+		                        	   				</li>
+		                             			</ul>
+			                      			</div>
+			                      
+			                      			<span><br/>Вывести записей на странице</span>
+					                		<div class="col-md-2">
+					                    		<select class="form-control pagination" id="pageSizeSelect">
+					                        		<option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+					                            			h:value="${pageSize}"
+					                            			th:selected="${pageSize} == ${selectedPageSize}"/>
+					                    		</select>
+					                		</div>
+					            	 	</div>
+			                   		</div>
+			                 	</div>
+			               	</div>
+			             </div>
+			             
+	                </section>
+              	</div>
+        	</div> 
+
+		   	<th:block th:insert="block/menu"></th:block>	
+      
+      	</div>
+
+   		<th:block th:insert="block/scriptJs"></th:block>	
+   
+   		<script th:inline="javascript">
+   		/*<![CDATA[*/
+	        $(document).ready(function() {
+	   			 changePageAndSize();
+			});
+	 
+			function changePageAndSize() {
+	   			 $('#pageSizeSelect').change(function(evt) {
+	    		    window.location.replace("/access/?pageSize=" + this.value + "&page=1");
+	  		     });
+			}
+		/*]]>*/
+	    </script>
+  	</body>
+</html>
